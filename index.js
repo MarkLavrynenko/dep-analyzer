@@ -147,7 +147,7 @@ function processProjectDirectory(projectRoot) {
 					parseFile(filePath, registerModule);
 				}
 				catch (err) {
-					print("Failed to parse .js file " + filePath);
+					print("Failed to parse .js file " + filePath + ". Error: ", err.message);
 				}
 			}
 		})
@@ -156,12 +156,14 @@ function processProjectDirectory(projectRoot) {
 	}
 
 function renderResults(modules) {
-	var text = fs.readFileSync("graph.jade.html");
+	var templatePath = path.join(__dirname, "graph.jade.html");
+	var text = fs.readFileSync(templatePath);
 	var template = jade.compile(text, { pretty : true });
 	var results = template({
 		modules : JSON.stringify(modules)
 	});
-	fs.writeFile("graph.html", results, function(err){
+	var outputFilePath = path.join(__dirname, "graph.html");
+	fs.writeFile(outputFilePath, results, function(err) {
 		if (err) {
 			print("Failed to write html");
 		}
@@ -169,7 +171,7 @@ function renderResults(modules) {
 }
 
 function serveResults() {
-	var serve = serveStatic('./')
+	var serve = serveStatic(__dirname);
 	var server = http.createServer(function(req, res){
 		var done = finalHandler(req, res);
 		print(done.toString());
