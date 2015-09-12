@@ -9,7 +9,6 @@ var http = require("http");
 var serveStatic = require("serve-static");
 var finalHandler = require("finalhandler");
 
-
 function print(){
 	console.log.apply(console.log, arguments)
 }
@@ -138,7 +137,8 @@ function processProjectDirectory(projectRoot) {
 		});
 	}
 	dfs.registerModule = registerModule;
-	var projectRootAbs = path.join(__dirname, projectRoot);
+	var callingRoot = path.dirname(require.main.filename);
+	var projectRootAbs = path.join(callingRoot, projectRoot);
 	file.walkSync(projectRootAbs, function(dirPath, dirs, files) {
 		files.forEach(function(file){
 			if (file.endsWith(".js")) {
