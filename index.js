@@ -16,9 +16,7 @@ function print(){
 
 String.prototype.endsWith = function(suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
-};
-
-var PROJECT_ROOT = ""/;
+}
 
 function noop(){
 
@@ -131,7 +129,7 @@ function parseFile(filePath, registerModule) {
 	dfs(ast, registerModule);
 }
 
-function processProjectDirectory() {
+function processProjectDirectory(projectRoot) {
 	var modules = [];
 	function registerModule(name, dependences) {
 		modules.push({
@@ -140,7 +138,7 @@ function processProjectDirectory() {
 		});
 	}
 	dfs.registerModule = registerModule;
-	var projectRootAbs = path.join(__dirname, PROJECT_ROOT);
+	var projectRootAbs = path.join(__dirname, projectRoot);
 	file.walkSync(projectRootAbs, function(dirPath, dirs, files) {
 		files.forEach(function(file){
 			if (file.endsWith(".js")) {
@@ -164,15 +162,21 @@ function renderResults(modules) {
 	})
 }
 
+function serveResults() {
+	var serve = serveStatic('./')
+	var server = http.createServer(function(req, res){
+		var done = finalHandler(req, res);
+		print(done.toString());
+		serve(req, res, done);
+	});
+	server.listen(2000);
+	print("View results at http://localhost:2000/graph")
+}
 
-var modules = processProjectDirectory();
-renderResults(modules);
+function analyzeProject(projectRoot) {
+	var modules = processProjectDirectory(projectRoot);
+	renderResults(modules);
+	serveResults();
+}
 
-var serve = serveStatic('./')
-var server = http.createServer(function(req, res){
-	var done = finalHandler(req, res);
-	print(done.toString());
-	serve(req, res, done);
-});
-server.listen(2000);
-print("View results at http://localhost:2000/graph")	
+exports.analyzeProject = analyzeProject;

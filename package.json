@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Mark Lavrynenko (marklavrinenko@gmail.com) https://github.com/MarkLavrynenko/",
   "license": "ISC",
   "dependencies": {
     "esprima": "^2.6.0",
