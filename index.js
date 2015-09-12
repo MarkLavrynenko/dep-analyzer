@@ -141,8 +141,14 @@ function processProjectDirectory(projectRoot) {
 	var projectRootAbs = path.join(callingRoot, projectRoot);
 	file.walkSync(projectRootAbs, function(dirPath, dirs, files) {
 		files.forEach(function(file){
+			var filePath = path.join(dirPath, file)
 			if (file.endsWith(".js")) {
-				parseFile(path.join(dirPath, file), registerModule);
+				try {
+					parseFile(filePath, registerModule);
+				}
+				catch (err) {
+					print("Failed to parse .js file " + filePath);
+				}
 			}
 		})
 	});
